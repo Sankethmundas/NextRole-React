@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Auth.css";
+import { registerUser } from "../../services/authService";
 
 function Register() {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ function Register() {
         });
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
 
         const { name, email, password, confirmPassword } = formData;
@@ -55,17 +56,33 @@ function Register() {
             return;
         }
 
-        toast.success("Register page is ready. Backend connection comes next.");
+        try {
 
-        setFormData({
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: ""
-        });
+            const response = await registerUser({
+                name,
+                email,
+                password
+            });
 
-        // later after backend integration:
-        // navigate("/login");
+            toast.success(response.message);
+
+            setFormData({
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: ""
+            });
+
+            navigate("/login");
+
+        } catch (error) {
+
+            toast.error(
+                error.response?.data?.message ||
+                "Registration failed."
+            );
+
+        }
     };
 
     const handleGoogleRegister = () => {
