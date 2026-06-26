@@ -1,0 +1,61 @@
+.cover-letter-page h1{
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.cover-letter-page p{
+    color: #64748b;
+}
+
+.empty-preview{
+    padding: 80px 20px;
+}
+
+.empty-preview h4{
+    margin-bottom: 10px;
+    color: #0f172a;
+}
+.cover-preview{
+    min-height: 400px;
+    white-space: pre-line;
+    line-height: 1.8;
+    font-size: 16px;
+}
+
+.cover-preview-card{
+    display: flex;
+    flex-direction: column;
+}
+
+.cover-top-bar{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.cover-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cover-icon{
+    font-size: 20px;
+    color: #1f2937;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+
+.cover-icon:hover{
+    color: #2563eb;
+    transform: translateY(-1px);
+}
+
+@media (max-width:768px){
+    .cover-preview{
+        min-height: 250px;
+    }
+}
