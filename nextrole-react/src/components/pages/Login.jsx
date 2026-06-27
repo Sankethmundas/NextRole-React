@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Auth.css";
+import { loginUser } from "../../services/authService";
 
 function Login() {
+
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -20,7 +23,7 @@ function Login() {
         });
     };
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
 
         const { email, password } = formData;
@@ -41,12 +44,40 @@ function Login() {
             return;
         }
 
-        toast.success("Login page is ready. Backend connection comes next.");
+        try {
 
-        setFormData({
-            email: "",
-            password: ""
-        });
+            const response = await loginUser({
+                email,
+                password
+            });
+
+            localStorage.setItem(
+                "token",
+                response.token
+            );
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(response.user)
+            );
+
+            toast.success(response.message);
+
+            setFormData({
+                email: "",
+                password: ""
+            });
+
+            navigate("/");
+
+        } catch (error) {
+
+            toast.error(
+                error.response?.data?.message ||
+                "Login failed."
+            );
+
+        }
     };
 
     const handleGoogleLogin = () => {
