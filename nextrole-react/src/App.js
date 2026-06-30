@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Home from "./components/pages/Home.jsx";
 import ResumeBuilder from "./components/pages/ResumeBuilder.jsx";
 import JobTracker from "./components/pages/JobTracker.jsx";
@@ -28,25 +28,29 @@ function App() {
 
         <Route path="/" element={<Home />} />
 
-        <Route
-          path="/resume-builder"
-          element={<ResumeBuilder />}
-        />
+        <Route element={<ProtectedRoute />}>
 
-        <Route
-          path="/job-tracker"
-          element={<JobTracker />}
-        />
+          <Route
+            path="/resume-builder"
+            element={<ResumeBuilder />}
+          />
 
-        <Route
-          path="/ats-checker"
-          element={<ATSChecker />}
-        />
+          <Route
+            path="/job-tracker"
+            element={<JobTracker />}
+          />
 
-        <Route
-          path="/cover-letter"
-          element={<CoverLetter />}
-        />
+          <Route
+            path="/ats-checker"
+            element={<ATSChecker />}
+          />
+
+          <Route
+            path="/cover-letter"
+            element={<CoverLetter />}
+          />
+
+        </Route>
 
         <Route
           path="/pricing"

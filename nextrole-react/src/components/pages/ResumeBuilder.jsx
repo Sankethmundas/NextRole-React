@@ -43,7 +43,7 @@ function ResumeBuilder() {
                 education: "",
                 projectTitle: "",
                 projectDescription: "",
-                certififcations: ""
+                certifications: ""
             };
 
     });
@@ -302,7 +302,7 @@ function ResumeBuilder() {
                         <h5>Certifications</h5>
                         <ul>
                             {
-                                resumeData.certifications
+                                (resumeData.certifications || "")
                                     .split(/,|\n/)
                                     .filter(cert => cert.trim() !== "")
                                     .map((cert, index) => (
