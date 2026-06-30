@@ -68,7 +68,7 @@ function Login() {
                 password: ""
             });
 
-            navigate("/");
+            navigate("/dashboard");
 
         } catch (error) {
 
