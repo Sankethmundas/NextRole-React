@@ -1,15 +1,31 @@
 import { useState, useEffect } from "react";
 import "./Jobtracker.css";
 import { toast } from "react-toastify";
+import {
+    createJob,
+    getJobs
+} from "../../services/jobService";
 
 function JobTracker() {
 
-    const [jobs, setJobs] = useState(() => {
-        const savedJobs = localStorage.getItem("jobs");
-        return savedJobs
-            ? JSON.parse(savedJobs)
-            : [];
-    });
+    const [jobs, setJobs] = useState([]);
+
+    useEffect(() => {
+
+        const fetchJobs = async () => {
+
+            try {
+                const data = await getJobs();
+                setJobs(data.jobs);
+            } catch (error) {
+                console.error(error);
+            }
+
+        };
+
+        fetchJobs();
+
+    }, []);
 
     const [company, setCompany] = useState("");
 
@@ -41,15 +57,8 @@ function JobTracker() {
         job => job.status === "Rejected"
     ).length;
 
-    useEffect(() => {
-        localStorage.setItem(
-            "jobs",
-            JSON.stringify(jobs)
-        );
 
-    }, [jobs]);
-
-    const addJob = () => {
+    const addJob = async () => {
 
         if (
             company.trim() === "" ||
@@ -68,16 +77,15 @@ function JobTracker() {
         };
 
         if (editIndex === -1) {
-
-            setJobs([
-                ...jobs,
-                newJob
-            ]);
+            await createJob(newJob);
+            const data = await getJobs();
+            setJobs(data.jobs);
             toast.success("Job added successfully!");
-        }else {
+        } else {
             const updatedJobs = [...jobs];
-            updatedJobs[editIndex] = newJob;
-            setJobs(updatedJobs);
+            await updateJob(jobs[editIndex].id, newJob);
+            const data = await getJobs();
+            setJobs(data.jobs);
             setEditIndex(-1);
             toast.success("Job updated successfully!");
         }
@@ -96,7 +104,7 @@ function JobTracker() {
         setEditIndex(index);
     };
 
-    const deleteJob = (index) => {
+    const deleteJob = async (index) => {
 
         const confirmed = window.confirm(
             "Are you sure you want to delete this application?"
@@ -106,10 +114,9 @@ function JobTracker() {
             return;
         }
 
-        const updatedJobs =
-            jobs.filter((_, i) => i !== index);
-
-        setJobs(updatedJobs);
+        await deleteJobAPI(jobs[index].id);
+        const data = await getJobs();
+        setJobs(data.jobs);
         toast.success("Job deleted successfully!");
 
     };
