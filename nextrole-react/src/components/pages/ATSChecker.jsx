@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ATSChecker.css";
 import mammoth from "mammoth";
 import { toast } from "react-toastify";
+import { saveAtsResult, getAtsResults } from "../../services/atsService";
 
 function ATSChecker() {
     const [resumeFile, setResumeFile] = useState(null);
@@ -13,6 +14,34 @@ function ATSChecker() {
     const [suggestions, setSuggestions] = useState([]);
     const [groupedMatched, setGroupedMatched] = useState({});
     const [groupedMissing, setGroupedMissing] = useState({});
+
+    useEffect(() => {
+        const loadSavedResult = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                return;
+            }
+
+            try {
+                const response = await getAtsResults();
+                const latestResult = response?.atsResults?.[0]?.result;
+
+                if (latestResult) {
+                    setMatchedKeywords(latestResult.matchedKeywords || []);
+                    setMissingKeywords(latestResult.missingKeywords || []);
+                    setAtsScore(latestResult.score || 0);
+                    setSuggestions(latestResult.suggestions || []);
+                    setGroupedMatched(latestResult.groupedMatched || {});
+                    setGroupedMissing(latestResult.groupedMissing || {});
+                }
+            } catch (error) {
+                console.error("Failed to load ATS results", error);
+            }
+        };
+
+        loadSavedResult();
+    }, []);
 
     const extractTextFromDOCX = async (file) => {
 
@@ -204,6 +233,31 @@ function ATSChecker() {
             generatedSuggestions.push(
                 "Use exact job-title keywords, technical skills, and important tools from the job description naturally inside your resume."
             );
+
+            const token = localStorage.getItem("token");
+
+            if (token) {
+                try {
+                    const response = await saveAtsResult({
+                        resumeText,
+                        jobDescription
+                    });
+
+                    const savedResult = response?.result;
+
+                    if (savedResult) {
+                        setMatchedKeywords(savedResult.matchedKeywords || matched);
+                        setMissingKeywords(savedResult.missingKeywords || missing);
+                        setAtsScore(savedResult.score || score);
+                        setSuggestions(savedResult.suggestions || generatedSuggestions);
+                        setGroupedMatched(savedResult.groupedMatched || matchedGroups);
+                        setGroupedMissing(savedResult.groupedMissing || missingGroups);
+                    }
+                } catch (error) {
+                    console.error("Failed to save ATS result", error);
+                    toast.error("ATS analysis was calculated but could not be saved.");
+                }
+            }
 
             toast.success("ATS score generated successfully!");
             setMatchedKeywords(matched);

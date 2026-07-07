@@ -5,6 +5,7 @@ import html2pdf from "html2pdf.js";
 import { FaDownload } from "react-icons/fa";
 import "./Resume.css";
 import { toast } from "react-toastify";
+import { saveResume, getResume } from "../../services/resumeService";
 
 function ResumeBuilder() {
 
@@ -55,13 +56,123 @@ function ResumeBuilder() {
         });
     };
 
-    useEffect(() => {
+    const handleSaveResume = async () => {
+        const token = localStorage.getItem("token");
 
+        if (!token) {
+            toast.error("Please log in to save your resume.");
+            return;
+        }
+
+        try {
+            await saveResume({
+                name: resumeData.name,
+                email: resumeData.email,
+                phone: resumeData.phone,
+                summary: resumeData.summary,
+                skills: resumeData.skills
+                    .split(",")
+                    .map((item) => item.trim())
+                    .filter(Boolean),
+                education: resumeData.education
+                    .split("\n")
+                    .map((item) => item.trim())
+                    .filter(Boolean),
+                projectTitle: resumeData.projectTitle,
+                projectDescription: resumeData.projectDescription,
+                certifications: resumeData.certifications
+                    .split(/,|\n/)
+                    .map((item) => item.trim())
+                    .filter(Boolean)
+            });
+
+            toast.success("Resume saved to backend!");
+        } catch (error) {
+            console.error("Failed to save resume", error);
+            toast.error("Failed to save resume.");
+        }
+    };
+
+    useEffect(() => {
+        const loadSavedResume = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                return;
+            }
+
+            try {
+                const response = await getResume();
+
+                if (response?.resume) {
+                    const savedResume = response.resume;
+
+                    setResumeData({
+                        name: savedResume.name || "",
+                        email: savedResume.email || "",
+                        phone: savedResume.phone || "",
+                        summary: savedResume.summary || "",
+                        skills: Array.isArray(savedResume.skills)
+                            ? savedResume.skills.join(", ")
+                            : (savedResume.skills || ""),
+                        education: Array.isArray(savedResume.education)
+                            ? savedResume.education.join("\n")
+                            : (savedResume.education || ""),
+                        projectTitle: savedResume.projectTitle || "",
+                        projectDescription: savedResume.projectDescription || "",
+                        certifications: Array.isArray(savedResume.certifications)
+                            ? savedResume.certifications.join(", ")
+                            : (savedResume.certifications || "")
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load saved resume", error);
+            }
+        };
+
+        loadSavedResume();
+    }, []);
+
+    useEffect(() => {
         localStorage.setItem(
             "resumeData",
             JSON.stringify(resumeData)
         );
 
+        const timer = setTimeout(async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                return;
+            }
+
+            try {
+                await saveResume({
+                    name: resumeData.name,
+                    email: resumeData.email,
+                    phone: resumeData.phone,
+                    summary: resumeData.summary,
+                    skills: resumeData.skills
+                        .split(",")
+                        .map((item) => item.trim())
+                        .filter(Boolean),
+                    education: resumeData.education
+                        .split("\n")
+                        .map((item) => item.trim())
+                        .filter(Boolean),
+                    projectTitle: resumeData.projectTitle,
+                    projectDescription: resumeData.projectDescription,
+                    certifications: resumeData.certifications
+                        .split(/,|\n/)
+                        .map((item) => item.trim())
+                        .filter(Boolean)
+                });
+            } catch (error) {
+                console.error("Failed to save resume", error);
+            }
+        }, 600);
+
+        return () => clearTimeout(timer);
     }, [resumeData]);
 
     return (
@@ -74,9 +185,14 @@ function ResumeBuilder() {
                 <div className="col-lg-6  mb-4">
                     <div className="card p-4">
 
-                        <h3 className="mb-4">
-                            Resume Information
-                        </h3>
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                            <h3 className="mb-0">
+                                Resume Information
+                            </h3>
+                            <button className="btn btn-success btn-sm" onClick={handleSaveResume}>
+                                Save Resume
+                            </button>
+                        </div>
 
                         <div className="mb-3">
 

@@ -3,28 +3,27 @@ import "./Jobtracker.css";
 import { toast } from "react-toastify";
 import {
     createJob,
-    getJobs
+    getJobs,
+    updateJob,
+    deleteJob as deleteJobAPI
 } from "../../services/jobService";
 
 function JobTracker() {
 
     const [jobs, setJobs] = useState([]);
 
-    useEffect(() => {
-
-        const fetchJobs = async () => {
+    const fetchJobs = async () => {
 
             try {
                 const data = await getJobs();
                 setJobs(data.jobs);
             } catch (error) {
-                console.error(error);
+                toast.error("Failed to load jobs");
             }
 
-        };
-
+    };
+    useEffect(() => {
         fetchJobs();
-
     }, []);
 
     const [company, setCompany] = useState("");
@@ -33,7 +32,7 @@ function JobTracker() {
 
     const [status, setStatus] = useState("Applied");
 
-    const [editIndex, setEditIndex] = useState(-1);
+    const [editingJobId, setEditingJobId] = useState(null);
 
     const [searchText, setSearchText] = useState("");
 
@@ -76,17 +75,17 @@ function JobTracker() {
 
         };
 
-        if (editIndex === -1) {
+        if (editingJobId === null) {
             await createJob(newJob);
-            const data = await getJobs();
-            setJobs(data.jobs);
+            await fetchJobs();
             toast.success("Job added successfully!");
         } else {
-            const updatedJobs = [...jobs];
-            await updateJob(jobs[editIndex].id, newJob);
-            const data = await getJobs();
-            setJobs(data.jobs);
-            setEditIndex(-1);
+            await updateJob(
+                editingJobId,
+                newJob
+            );
+            await fetchJobs();
+            setEditingJobId(null);
             toast.success("Job updated successfully!");
         }
 
@@ -96,15 +95,17 @@ function JobTracker() {
 
     };
 
-    const editJob = (index) => {
-        const job = jobs[index];
+    const editJob = (job) => {
+
         setCompany(job.company);
         setRole(job.role);
         setStatus(job.status);
-        setEditIndex(index);
+
+        setEditingJobId(job._id);
+
     };
 
-    const deleteJob = async (index) => {
+    const deleteJob = async (job) => {
 
         const confirmed = window.confirm(
             "Are you sure you want to delete this application?"
@@ -114,12 +115,16 @@ function JobTracker() {
             return;
         }
 
-        await deleteJobAPI(jobs[index].id);
-        const data = await getJobs();
-        setJobs(data.jobs);
-        toast.success("Job deleted successfully!");
+        try {
+            await deleteJobAPI(job._id);
+            await fetchJobs();
+            toast.success("Job deleted successfully!");
+        } catch (error) {
+            toast.error("Failed to delete job");
+        }
 
     };
+
 
     const filteredJobs = jobs.filter((job) => {
 
@@ -228,7 +233,7 @@ function JobTracker() {
                             onClick={addJob}
                         >
                             {
-                                editIndex === -1
+                                editingJobId === null
                                     ? "Add Job"
                                     : "Update Job"
                             }
@@ -381,9 +386,9 @@ function JobTracker() {
                                 <tbody>
 
                                     {
-                                        filteredJobs.map((job, index) => (
+                                        filteredJobs.map((job) => (
 
-                                            <tr key={index}>
+                                            <tr key={job._id}>
 
                                                 <td>
                                                     {job.company}
@@ -408,7 +413,7 @@ function JobTracker() {
                                                     <button
                                                         className="edit-btn"
                                                         onClick={() =>
-                                                            editJob(index)
+                                                            editJob(job)
                                                         }
                                                     >
                                                         Edit
@@ -417,7 +422,7 @@ function JobTracker() {
                                                     <button
                                                         className="delete-btn"
                                                         onClick={() =>
-                                                            deleteJob(index)
+                                                            deleteJob(job)
                                                         }
                                                     >
                                                         Delete

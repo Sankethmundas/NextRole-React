@@ -11,6 +11,7 @@ const getConfig = () => {
     };
 };
 
+
 const createJob = async (jobData) => {
 
     const response = await axios.post(
@@ -35,11 +36,26 @@ const getJobs = async () => {
 
 const updateJob = async (id, jobData) => {
 
-}
+    const response = await axios.put(
+        `${API_URL}/${id}`,
+        jobData,
+        getConfig()
+    );
+
+    return response.data;
+
+};
 
 const deleteJob = async (id) => {
 
-}
+    const response = await axios.delete(
+        `${API_URL}/${id}`,
+        getConfig()
+    );
+
+    return response.data;
+
+};
 
 export {
     createJob,

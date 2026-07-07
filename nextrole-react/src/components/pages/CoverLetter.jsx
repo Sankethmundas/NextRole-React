@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import html2pdf from "html2pdf.js";
 import { FiCopy, FiDownload } from "react-icons/fi";
 import "./CoverLetter.css";
 import { toast } from "react-toastify";
+import { saveCoverLetter, getCoverLetter } from "../../services/coverLetterService";
 
 function CoverLetter() {
 
@@ -18,6 +19,36 @@ function CoverLetter() {
 
     const [generatedLetter, setGeneratedLetter] = useState("");
 
+    useEffect(() => {
+        const loadSavedLetter = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                return;
+            }
+
+            try {
+                const response = await getCoverLetter();
+
+                if (response?.coverLetter) {
+                    setFormData(response.coverLetter.formData || {
+                        name: "",
+                        role: "",
+                        company: "",
+                        skills: "",
+                        fit: "",
+                        tone: "Professional"
+                    });
+                    setGeneratedLetter(response.coverLetter.generatedLetter || "");
+                }
+            } catch (error) {
+                console.error("Failed to load cover letter", error);
+            }
+        };
+
+        loadSavedLetter();
+    }, []);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -25,7 +56,7 @@ function CoverLetter() {
         });
     };
 
-    const handleGenerateLetter = () => {
+    const handleGenerateLetter = async () => {
 
         if (
             !formData.name ||
@@ -63,6 +94,18 @@ function CoverLetter() {
         const finalLetter = `${intro}\n\n${body}\n\n${closing}`;
 
         setGeneratedLetter(finalLetter);
+
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            try {
+                await saveCoverLetter(formData);
+                toast.success("Cover letter saved to backend!");
+            } catch (error) {
+                console.error("Failed to save cover letter", error);
+                toast.error("Failed to save cover letter.");
+            }
+        }
     };
 
     const handleCopyLetter = async () => {
@@ -212,7 +255,7 @@ function CoverLetter() {
                             className="btn btn-primary w-100"
                             onClick={handleGenerateLetter}
                         >
-                            Generate Cover Letter
+                            Generate & Save Cover Letter
                         </button>
                     </div>
                 </div>
