@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { GoogleLogin } from "@react-oauth/google";
 import "./Auth.css";
-import { loginUser } from "../../services/authService";
+import { loginUser, googleLoginUser } from "../../services/authService";
 
 function Login() {
 
@@ -80,8 +80,29 @@ function Login() {
         }
     };
 
-    const handleGoogleLogin = () => {
-        toast.info("Google authentication will be connected in backend integration.");
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            if (!credentialResponse.credential) {
+                toast.error("Google authentication failed.");
+                return;
+            }
+
+            const response = await googleLoginUser(credentialResponse.credential);
+
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("user", JSON.stringify(response.user));
+
+            toast.success(response.message || "Google Login successful!");
+            navigate("/dashboard");
+        } catch (error) {
+            toast.error(
+                error.response?.data?.message || "Google authentication failed."
+            );
+        }
+    };
+
+    const handleGoogleError = () => {
+        toast.error("Google Login was cancelled or failed.");
     };
 
     return (
@@ -95,13 +116,16 @@ function Login() {
                     </p>
                 </div>
 
-                <button
-                    className="google-auth-btn"
-                    onClick={handleGoogleLogin}
-                >
-                    <FcGoogle className="google-icon" />
-                    Continue with Google
-                </button>
+                <div className="google-auth-wrapper d-flex justify-content-center mb-3">
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleError}
+                        theme="outline"
+                        size="large"
+                        text="continue_with"
+                        shape="rectangular"
+                    />
+                </div>
 
                 <div className="auth-divider">
                     <span>or login with email</span>

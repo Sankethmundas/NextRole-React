@@ -9,8 +9,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 router.post(
     "/",
     authMiddleware,
-    createJob,
-    getJobs
+    createJob
 );
 router.get(
     "/",

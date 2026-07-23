@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { GoogleLogin } from "@react-oauth/google";
 import "./Auth.css";
-import { registerUser } from "../../services/authService";
+import { registerUser, googleLoginUser } from "../../services/authService";
 
 function Register() {
     const navigate = useNavigate();
@@ -85,8 +85,29 @@ function Register() {
         }
     };
 
-    const handleGoogleRegister = () => {
-        toast.info("Google authentication will be connected in backend integration.");
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            if (!credentialResponse.credential) {
+                toast.error("Google authentication failed.");
+                return;
+            }
+
+            const response = await googleLoginUser(credentialResponse.credential);
+
+            localStorage.setItem("token", response.token);
+            localStorage.setItem("user", JSON.stringify(response.user));
+
+            toast.success(response.message || "Google Registration successful!");
+            navigate("/dashboard");
+        } catch (error) {
+            toast.error(
+                error.response?.data?.message || "Google registration failed."
+            );
+        }
+    };
+
+    const handleGoogleError = () => {
+        toast.error("Google Sign Up was cancelled or failed.");
     };
 
     return (
@@ -100,13 +121,16 @@ function Register() {
                     </p>
                 </div>
 
-                <button
-                    className="google-auth-btn"
-                    onClick={handleGoogleRegister}
-                >
-                    <FcGoogle className="google-icon" />
-                    Continue with Google
-                </button>
+                <div className="google-auth-wrapper d-flex justify-content-center mb-3">
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleError}
+                        theme="outline"
+                        size="large"
+                        text="signup_with"
+                        shape="rectangular"
+                    />
+                </div>
 
                 <div className="auth-divider">
                     <span>or register with email</span>

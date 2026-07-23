@@ -93,11 +93,14 @@ function ResumeBuilder() {
         }
     };
 
+    const isLoaded = useRef(false);
+
     useEffect(() => {
         const loadSavedResume = async () => {
             const token = localStorage.getItem("token");
 
             if (!token) {
+                isLoaded.current = true;
                 return;
             }
 
@@ -127,6 +130,8 @@ function ResumeBuilder() {
                 }
             } catch (error) {
                 console.error("Failed to load saved resume", error);
+            } finally {
+                isLoaded.current = true;
             }
         };
 
@@ -138,6 +143,10 @@ function ResumeBuilder() {
             "resumeData",
             JSON.stringify(resumeData)
         );
+
+        if (!isLoaded.current) {
+            return;
+        }
 
         const timer = setTimeout(async () => {
             const token = localStorage.getItem("token");
@@ -170,7 +179,7 @@ function ResumeBuilder() {
             } catch (error) {
                 console.error("Failed to save resume", error);
             }
-        }, 600);
+        }, 1200);
 
         return () => clearTimeout(timer);
     }, [resumeData]);

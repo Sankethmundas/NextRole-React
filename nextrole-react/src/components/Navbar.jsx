@@ -67,6 +67,7 @@ function Navbar() {
                         Resume Builder
                     </Link>
                 </li>
+                
                 <li>
                     <Link
                         to="/ats-checker"
@@ -75,6 +76,7 @@ function Navbar() {
                         ATS Checker
                     </Link>
                 </li>
+
                 <li>
                     <Link
                         to="/cover-letter"

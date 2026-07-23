@@ -343,103 +343,68 @@ function JobTracker() {
 
                         {
                             filteredJobs.length === 0 ? (
-
                                 <div className="text-center p-5">
-
                                     <h4>
                                         No Applications Found
                                     </h4>
-
                                     <p>
                                         Start tracking your job applications.
                                     </p>
-
                                 </div>
-
                             ) : (
-
-                                <table className="table">
-                                    ...
-                                </table>
-
+                                <div className="table-responsive">
+                                    <table className="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Company</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                filteredJobs.map((job) => (
+                                                    <tr key={job._id}>
+                                                        <td>
+                                                            {job.company}
+                                                        </td>
+                                                        <td>
+                                                            {job.role}
+                                                        </td>
+                                                        <td>
+                                                            <span
+                                                                className={`status-badge ${job.status.toLowerCase()}`}
+                                                            >
+                                                                {job.status}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <button
+                                                                className="edit-btn"
+                                                                onClick={() =>
+                                                                    editJob(job)
+                                                                }
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                className="delete-btn"
+                                                                onClick={() =>
+                                                                    deleteJob(job)
+                                                                }
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
                             )
                         }
-                        <div className="table-responsive">
-                            <table className="table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>Company</th>
-
-                                        <th>Role</th>
-
-                                        <th>Status</th>
-
-                                        <th>Actions</th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    {
-                                        filteredJobs.map((job) => (
-
-                                            <tr key={job._id}>
-
-                                                <td>
-                                                    {job.company}
-                                                </td>
-
-                                                <td>
-                                                    {job.role}
-                                                </td>
-
-                                                <td>
-
-                                                    <span
-                                                        className={`status-badge ${job.status.toLowerCase()}`}
-                                                    >
-                                                        {job.status}
-                                                    </span>
-
-                                                </td>
-
-                                                <td>
-
-                                                    <button
-                                                        className="edit-btn"
-                                                        onClick={() =>
-                                                            editJob(job)
-                                                        }
-                                                    >
-                                                        Edit
-                                                    </button>
-
-                                                    <button
-                                                        className="delete-btn"
-                                                        onClick={() =>
-                                                            deleteJob(job)
-                                                        }
-                                                    >
-                                                        Delete
-                                                    </button>
-
-                                                </td>
-
-                                            </tr>
-
-                                        ))
-                                    }
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
 
                     </div>
 

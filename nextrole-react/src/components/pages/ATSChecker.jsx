@@ -8,8 +8,8 @@ function ATSChecker() {
     const [resumeFile, setResumeFile] = useState(null);
     const [jobDescription, setJobDescription] = useState("");
     const [atsScore, setAtsScore] = useState(null);
-    const [matchedKeywords, setMatchedKeywords] = useState([]);
-    const [missingKeywords, setMissingKeywords] = useState([]);
+    const [, setMatchedKeywords] = useState([]);
+    const [, setMissingKeywords] = useState([]);
     const [isChecking, setIsChecking] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [groupedMatched, setGroupedMatched] = useState({});

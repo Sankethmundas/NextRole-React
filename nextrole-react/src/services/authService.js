@@ -1,5 +1,7 @@
 import axios from "axios";
-const API_URL = "http://localhost:5000/api/auth";
+
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_URL = `${BASE_URL}/api/auth`;
 
 const registerUser = async(userData) => {
     
@@ -21,4 +23,12 @@ const loginUser = async (userData) => {
     return response.data;
 };
 
-export { registerUser, loginUser };
+const googleLoginUser = async (credential) => {
+    const response = await axios.post(
+        `${API_URL}/google`,
+        { credential }
+    );
+    return response.data;
+};
+
+export { registerUser, loginUser, googleLoginUser };
