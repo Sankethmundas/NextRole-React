@@ -144,5 +144,5 @@ Open `http://localhost:3000` in your browser.
 
 ## 👨‍💻 Author
 
-Crafted with ❤️ by **Sanketh Mundas**  
+Crafted with ❤️ by **Sankethkumar**  
 *Feel free to star ⭐️ this repository if you find it helpful!*
