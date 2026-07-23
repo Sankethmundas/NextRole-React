@@ -93,16 +93,6 @@ function Navbar() {
                         Job Tracker
                     </Link>
                 </li>
-                {!isLoggedIn && (
-                    <li>
-                        <Link
-                            to="/pricing"
-                            onClick={() => setMenuOpen(false)}
-                        >
-                            Pricing
-                        </Link>
-                    </li>
-                )}
 
                 {!isLoggedIn && (
                     <li>

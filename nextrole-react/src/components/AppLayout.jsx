@@ -8,7 +8,6 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import JobTracker from "./pages/JobTracker";
 import ATSChecker from "./pages/ATSChecker";
 import CoverLetter from "./pages/CoverLetter";
-import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -27,11 +26,6 @@ function AppLayout() {
             <Routes>
 
                 <Route path="/" element={<Home />} />
-
-                <Route
-                    path="/pricing"
-                    element={<Pricing />}
-                />
 
                 <Route
                     path="/login"
