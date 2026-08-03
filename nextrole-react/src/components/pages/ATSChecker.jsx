@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import "./ATSChecker.css";
 import mammoth from "mammoth";
+import * as pdfjsLib from "pdfjs-dist";
 import { toast } from "react-toastify";
 import { saveAtsResult, getAtsResults } from "../../services/atsService";
+
+// Configure pdfjs worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 function ATSChecker() {
     const [resumeFile, setResumeFile] = useState(null);
@@ -43,40 +47,107 @@ function ATSChecker() {
         loadSavedResult();
     }, []);
 
-    const extractTextFromDOCX = async (file) => {
+    const extractTextFromPDF = async (file) => {
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        let fullText = "";
 
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map((item) => item.str).join(" ");
+            fullText += pageText + "\n";
+        }
+        return fullText;
+    };
+
+    const extractTextFromDOCX = async (file) => {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.extractRawText({ arrayBuffer });
-
         return result.value;
+    };
+
+    const extractTextFromTXT = async (file) => {
+        return await file.text();
     };
 
     const skillKeywords = [
         "html",
         "css",
         "javascript",
+        "typescript",
         "react",
         "reactjs",
+        "next.js",
+        "nextjs",
+        "vue",
+        "vuejs",
+        "angular",
         "bootstrap",
         "tailwind",
+        "tailwindcss",
         "sql",
         "mysql",
+        "postgresql",
+        "postgres",
         "mongodb",
+        "redis",
         "firebase",
         "python",
+        "django",
+        "flask",
+        "fastapi",
         "java",
+        "spring",
+        "spring boot",
         "c++",
+        "c#",
+        ".net",
+        "php",
+        "laravel",
+        "ruby",
+        "rails",
         "node",
         "nodejs",
         "express",
+        "expressjs",
+        "graphql",
+        "rest api",
+        "restful api",
+        "microservices",
         "frontend",
         "backend",
-        "full stack"
+        "full stack",
+        "fullstack",
+        "system design",
+        "data structures",
+        "algorithms",
+        "machine learning",
+        "deep learning",
+        "artificial intelligence",
+        "nlp",
+        "pandas",
+        "numpy",
+        "scikit-learn",
+        "tensorflow",
+        "pytorch"
     ];
 
     const toolKeywords = [
         "git",
         "github",
+        "gitlab",
+        "bitbucket",
+        "docker",
+        "kubernetes",
+        "aws",
+        "azure",
+        "gcp",
+        "google cloud",
+        "vercel",
+        "render",
+        "netlify",
         "api",
         "apis",
         "api integration",
@@ -84,14 +155,29 @@ function ATSChecker() {
         "localstorage",
         "form handling",
         "state management",
+        "redux",
+        "zustand",
         "component-based architecture",
         "ui",
         "ux",
         "excel",
         "tableau",
         "power bi",
-        "aws",
-        "azure",
+        "postman",
+        "figma",
+        "jira",
+        "confluence",
+        "ci/cd",
+        "jenkins",
+        "github actions",
+        "linux",
+        "bash",
+        "webpack",
+        "vite",
+        "babel",
+        "jest",
+        "cypress",
+        "selenium",
         "matlab"
     ];
 
@@ -99,20 +185,43 @@ function ATSChecker() {
         "certification",
         "certifications",
         "aws certification",
+        "aws certified",
         "azure certification",
+        "azure certified",
+        "google cloud certified",
         "oracle java",
+        "cisco",
+        "ccna",
+        "comptia",
+        "certified kubernetes administrator",
+        "cka",
+        "pmp",
+        "scrum master",
         "nptel",
-        "coursera"
+        "coursera",
+        "udemy",
+        "edx",
+        "hackerrank",
+        "leetcode"
     ];
 
     const eligibilityKeywords = [
         "internship",
+        "full-time",
+        "remote",
         "btech",
+        "mtech",
+        "bsc",
+        "msc",
         "computer science",
+        "information technology",
+        "software engineering",
         "problem solving",
         "problem-solving",
-        "data analysis",
-        "machine learning"
+        "teamwork",
+        "leadership",
+        "communication",
+        "data analysis"
     ];
 
     const allKeywords = [
@@ -165,11 +274,16 @@ function ATSChecker() {
 
         try {
             let resumeText = "";
+            const fileNameLower = resumeFile.name.toLowerCase();
 
-            if (resumeFile.name.toLowerCase().endsWith(".docx")) {
+            if (fileNameLower.endsWith(".pdf")) {
+                resumeText = await extractTextFromPDF(resumeFile);
+            } else if (fileNameLower.endsWith(".docx")) {
                 resumeText = await extractTextFromDOCX(resumeFile);
+            } else if (fileNameLower.endsWith(".txt")) {
+                resumeText = await extractTextFromTXT(resumeFile);
             } else {
-                toast.error("Please upload only DOCX file for now.");
+                toast.error("Please upload a supported format: PDF, DOCX, or TXT.");
                 setIsChecking(false);
                 return;
             }
@@ -293,14 +407,14 @@ function ATSChecker() {
                         <div className="upload-box">
                             <input
                                 type="file"
-                                accept=".docx"
+                                accept=".pdf,.docx,.txt"
                                 className="form-control"
                                 onChange={(e) =>
                                     setResumeFile(e.target.files[0])
                                 }
                             />
                             <p className="upload-note mt-3 mb-0">
-                                Supported formats: DOCX
+                                Supported formats: PDF, DOCX, TXT
                             </p>
 
                             {resumeFile && (

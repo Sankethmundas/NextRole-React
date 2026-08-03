@@ -24,8 +24,8 @@
 - **CSV Data Export**: Export application history into downloadable `.csv` spreadsheets.
 
 ### 🎯 3. ATS Resume Checker
-- **Document Parsing**: Extract raw text from `.docx` resume files using `mammoth.js`.
-- **Keyword Match Calculation**: Compares resume content against job description requirements.
+- **Document Parsing**: Multi-format text extraction supporting `.pdf` (via `pdfjs-dist`), `.docx` (via `mammoth.js`), and `.txt` files.
+- **Keyword Match Calculation**: Compares resume content against job description requirements using an expanded taxonomy covering modern tech stacks, frameworks, cloud services, and certifications.
 - **Categorized Breakdown**: Group matched and missing keywords into *Skills*, *Tools*, *Certifications*, and *Eligibility*.
 - **Actionable Recommendations**: Delivers smart suggestions to boost ATS match scores.
 
