@@ -34,6 +34,8 @@ function JobTracker() {
 
     const [editingJobId, setEditingJobId] = useState(null);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [searchText, setSearchText] = useState("");
 
     const [statusFilter, setStatusFilter] = useState("all");
@@ -52,12 +54,11 @@ function JobTracker() {
         job => job.status === "Offer"
     ).length;
 
-    const rejectedJobs = jobs.filter(
-        job => job.status === "Rejected"
-    ).length;
-
-
     const addJob = async () => {
+
+        if (isSubmitting) {
+            return;
+        }
 
         if (
             company.trim() === "" ||
@@ -75,23 +76,31 @@ function JobTracker() {
 
         };
 
-        if (editingJobId === null) {
-            await createJob(newJob);
-            await fetchJobs();
-            toast.success("Job added successfully!");
-        } else {
-            await updateJob(
-                editingJobId,
-                newJob
-            );
-            await fetchJobs();
-            setEditingJobId(null);
-            toast.success("Job updated successfully!");
-        }
+        setIsSubmitting(true);
 
-        setCompany("");
-        setRole("");
-        setStatus("Applied");
+        try {
+            if (editingJobId === null) {
+                await createJob(newJob);
+                await fetchJobs();
+                toast.success("Job added successfully!");
+            } else {
+                await updateJob(
+                    editingJobId,
+                    newJob
+                );
+                await fetchJobs();
+                toast.success("Job updated successfully!");
+            }
+
+            setCompany("");
+            setRole("");
+            setStatus("Applied");
+            setEditingJobId(null);
+        } catch {
+            toast.error("Failed to save job. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
 
     };
 
@@ -222,7 +231,9 @@ function JobTracker() {
 
                             <option>Interview</option>
 
-                            <option>Rejected</option>
+                            {status === "Rejected" && editingJobId !== null && (
+                                <option>Rejected</option>
+                            )}
 
                             <option>Offer</option>
 
@@ -231,12 +242,13 @@ function JobTracker() {
                         <button
                             className="btn btn-primary w-100"
                             onClick={addJob}
+                            disabled={isSubmitting}
                         >
-                            {
-                                editingJobId === null
+                            {isSubmitting
+                                ? "Saving..."
+                                : editingJobId === null
                                     ? "Add Job"
-                                    : "Update Job"
-                            }
+                                    : "Update Job"}
                         </button>
 
                     </div>
@@ -278,13 +290,6 @@ function JobTracker() {
                                 <div className="stat-card offer-card">
                                     <h3>{offerJobs}</h3>
                                     <p>Offers</p>
-                                </div>
-                            </div>
-
-                            <div className="col mb-3">
-                                <div className="stat-card offer-card">
-                                    <h3>{rejectedJobs}</h3>
-                                    <p>Rejected</p>
                                 </div>
                             </div>
 
