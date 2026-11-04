@@ -1,19 +1,457 @@
-.download-btn{
-    border:none;
-    background:none;
-    font-size:18px;
-    color:#2563eb;
-    cursor:pointer;
+/* ===================================================
+   NextRole Real-World Interactive Resume Builder Styles
+   =================================================== */
+
+.resume-builder-page {
+    background-color: #f8fafc;
+    min-height: calc(100vh - 70px);
 }
 
-.download-btn:hover{
-    transform:translateY(-2px);
+/* Builder Top Toolbar */
+.builder-toolbar {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 }
 
-@media(max-width:768px){
+.builder-toolbar-title h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
 
-    .resume-preview{
-        margin-top:20px;
+.builder-toolbar-title p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-toolbar-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.btn-upload-resume {
+    background-color: #f1f5f9;
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+.btn-upload-resume:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.btn-tailor-jd {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.btn-tailor-jd:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-download-pdf {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-download-pdf:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-save-resume {
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.btn-save-resume:hover {
+    background-color: #059669;
+    color: #ffffff;
+}
+
+.template-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.template-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
+}
+
+.template-pill.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+/* Editor Panel */
+.builder-editor-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+
+.editor-tabs {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 6px 12px 0;
+}
+
+.editor-tab-btn {
+    border: none;
+    background: none;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.editor-tab-btn:hover {
+    color: #2563eb;
+}
+
+.editor-tab-btn.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: #ffffff;
+    border-radius: 8px 8px 0 0;
+}
+
+.editor-content-body {
+    padding: 24px;
+}
+
+.section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.form-control-modern {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.form-control-modern:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
+
+/* Real Resume Sheet / Paper View */
+.resume-paper-container {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.resume-paper {
+    background: #ffffff;
+    width: 100%;
+    max-width: 800px;
+    min-height: 1050px;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    padding: 48px;
+    color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+/* Resume Templates */
+/* 1. Modern Blue */
+.resume-paper.theme-modern {
+    border-top: 6px solid #2563eb;
+}
+.resume-paper.theme-modern .paper-name {
+    color: #1e3a8a;
+    font-weight: 800;
+}
+.resume-paper.theme-modern .paper-section-title {
+    color: #1d4ed8;
+    border-bottom: 2px solid #e0e7ff;
+}
+
+/* 2. Executive Slate */
+.resume-paper.theme-executive {
+    border-top: 6px solid #0f172a;
+}
+.resume-paper.theme-executive .paper-name {
+    color: #0f172a;
+    font-weight: 800;
+}
+.resume-paper.theme-executive .paper-section-title {
+    color: #0f172a;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* 3. Clean Tech / Emerald */
+.resume-paper.theme-tech {
+    border-top: 6px solid #059669;
+}
+.resume-paper.theme-tech .paper-name {
+    color: #064e3b;
+    font-weight: 800;
+}
+.resume-paper.theme-tech .paper-section-title {
+    color: #059669;
+    border-bottom: 2px solid #d1fae5;
+}
+
+/* Resume Paper Inner Elements */
+.paper-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.paper-name {
+    font-size: 2rem;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+}
+
+.paper-contact-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.paper-contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.paper-section {
+    margin-bottom: 20px;
+}
+
+.paper-section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+}
+
+.paper-summary-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #334155;
+    margin-bottom: 0;
+}
+
+.paper-skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.paper-skill-badge {
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.825rem;
+    font-weight: 500;
+}
+
+.paper-skill-badge.badge-tailored {
+    background: #ede9fe;
+    color: #6d28d9;
+    border-color: #ddd6fe;
+    font-weight: 600;
+}
+
+.paper-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+}
+
+.paper-entry-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.paper-entry-desc {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #334155;
+}
+
+.paper-cert-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 0.875rem;
+    color: #334155;
+    line-height: 1.6;
+}
+
+/* Tailor to Job Description Modal / Overlay */
+.tailor-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.tailor-modal-dialog {
+    background: #ffffff;
+    border-radius: 20px;
+    max-width: 820px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    padding: 32px;
+}
+
+.tailor-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tailor-score-meter {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.score-meter-box {
+    text-align: center;
+}
+
+.score-meter-box .num {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.score-meter-box.before .num {
+    color: #ef4444;
+}
+
+.score-meter-box.after .num {
+    color: #10b981;
+}
+
+.tailor-diff-card {
+    background: #f8fafc;
+    border-left: 4px solid #6366f1;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+}
+
+/* Upload Dropzone inside modal or top */
+.upload-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upload-dropzone:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+/* Print Rules for High-Res PDF Export */
+@media print {
+    body {
+        background: #ffffff !important;
     }
-
+    .builder-toolbar,
+    .builder-editor-card,
+    nav,
+    footer,
+    .btn,
+    .tailor-modal-overlay {
+        display: none !important;
+    }
+    .resume-paper {
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
 }
