@@ -1,199 +1,432 @@
-.ats-page h1{
-    font-size: 42px;
-    font-weight: 700;
+/* ===================================================
+   NextRole Real ATS Checker Styles
+   =================================================== */
+
+.ats-page {
+    background-color: #f8fafc;
+    min-height: calc(100vh - 70px);
 }
 
-.ats-page p{
-    color: #64748b;
-}
-
-.ats-textarea{
-    min-height: 300px;
-    resize: none;
-    font-size: 15px;
-    line-height: 1.6;
-}
-
-.ats-result-card{
-    border-radius: 16px;
-}
-
-.ats-score-circle{
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    background: #2563eb;
-    color: white;
-    display: flex;
+.ats-header-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    font-weight: 700;
+    gap: 6px;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.ats-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.ats-subtitle {
+    color: #64748b;
+    font-size: 1.05rem;
+    max-width: 720px;
     margin: 0 auto;
 }
 
-.score-label{
-    font-size: 18px;
-    font-weight: 600;
+/* Input Cards */
+.ats-input-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    height: 100%;
+}
+
+.ats-input-title {
+    font-size: 1.15rem;
+    font-weight: 700;
     color: #0f172a;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.keyword-box{
-    border-radius: 14px;
-    padding: 20px;
-    min-height: 220px;
+.ats-upload-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.keyword-box h4{
-    margin-bottom: 15px;
-    font-size: 22px;
+.ats-upload-dropzone:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.ats-upload-dropzone.has-file {
+    border-color: #10b981;
+    background: #ecfdf5;
+}
+
+.ats-selected-file-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #86efac;
+    color: #166534;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.875rem;
     font-weight: 600;
+    margin-top: 12px;
 }
 
-.keyword-box ul{
-    padding-left: 20px;
-    margin: 0;
+.ats-source-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 
-.keyword-box li{
-    margin-bottom: 8px;
-    text-transform: capitalize;
+.ats-source-btn {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.matched-box{
-    background: rgba(34,197,94,0.08);
-    border: 1px solid rgba(34,197,94,0.25);
+.ats-source-btn.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
 }
 
-.missing-box{
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.25);
+.ats-textarea-custom {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 240px;
 }
 
-.upload-box{
+.ats-textarea-custom:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
+
+/* Results Card */
+.ats-result-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.ats-result-hero {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #ffffff;
+    padding: 36px 24px;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+}
+
+.ats-score-gauge {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    min-height: 300px;
-}
-
-.upload-note{
-    color: #64748b;
-    font-size: 14px;
-}
-
-.selected-file{
-    background: rgba(37,99,235,0.08);
-    border: 1px solid rgba(37,99,235,0.15);
-    padding: 12px 14px;
-    border-radius: 10px;
-    color: #0f172a;
-    font-size: 14px;
-}
-
-.suggestions-box{
-    background: rgba(37,99,235,0.06);
-    border: 1px solid rgba(37,99,235,0.15);
-    border-radius: 14px;
-    padding: 22px;
-}
-
-.suggestions-box h4{
-    margin-bottom: 14px;
-    font-size: 22px;
-    font-weight: 600;
-    color: #0f172a;
-}
-
-.suggestions-box ul{
-    margin: 0;
-    padding-left: 20px;
-}
-
-.suggestions-box li{
-    margin-bottom: 10px;
-    line-height: 1.6;
-    color: #334155;
-}
-.keyword-group{
-    margin-top: 18px;
-}
-
-.keyword-group h5{
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #0f172a;
-}
-
-.keyword-group ul{
-    padding-left: 20px;
-    margin-bottom: 0;
-}
-
-.keyword-group li{
-    margin-bottom: 8px;
-    color: #334155;
-}
-
-.ats-score-circle{
-    width: 130px;
-    height: 130px;
-    margin: 0 auto;
-    border-radius: 50%;
-    display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    font-weight: 700;
-    color: white;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-.score-high{
-    background: linear-gradient(135deg, #16a34a, #22c55e);
+.ats-score-gauge .score-num {
+    font-size: 2.75rem;
+    font-weight: 800;
+    line-height: 1;
 }
 
-.score-medium{
-    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+.ats-score-gauge .score-sub {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
 }
 
-.score-low{
+.ats-score-gauge.score-high {
+    background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.ats-score-gauge.score-medium {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+
+.ats-score-gauge.score-low {
     background: linear-gradient(135deg, #dc2626, #ef4444);
 }
 
-.score-label{
-    font-size: 16px;
-    color: #64748b;
-    margin-bottom: 6px;
-}
-
-.score-status{
-    font-size: 22px;
+.ats-status-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: #0f172a;
     margin-bottom: 10px;
 }
 
-.score-summary{
-    max-width: 700px;
-    margin: 0 auto;
-    color: #475569;
-    line-height: 1.7;
+.ats-status-badge.status-high {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-@media (max-width:768px){
-    .ats-page h1{
-        font-size: 34px;
-    }
+.ats-status-badge.status-medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
 
-    .ats-textarea{
-        min-height: 220px;
-    }
+.ats-status-badge.status-low {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
 
-    .ats-score-circle{
-        width: 110px;
-        height: 110px;
-        font-size: 28px;
-    }
+/* 4-Metric Breakdown Grid */
+.ats-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ats-metric-tile {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.ats-metric-tile .label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.ats-metric-tile .val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+/* Missing Skills Interactive Section */
+.missing-skills-container {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.missing-skills-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.missing-skills-header h4 {
+    color: #991b1b;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.missing-skill-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-add-skill {
+    background: #fee2e2;
+    border: 1px solid #f87171;
+    color: #991b1b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-add-skill:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.missing-skill-pill.added {
+    background: #ecfdf5;
+    border-color: #86efac;
+    color: #166534;
+}
+
+/* Matched Skills Box */
+.matched-skills-container {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.matched-skills-container h4 {
+    color: #166534;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.matched-skill-pill {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #86efac;
+    color: #15803d;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    margin: 4px;
+}
+
+/* Download Action Banner */
+.ats-action-banner {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ats-action-banner h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.ats-action-banner p {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.btn-download-updated {
+    background: #ffffff;
+    color: #1d4ed8;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.btn-download-updated:hover {
+    background: #f8fafc;
+    color: #1e40af;
+    transform: translateY(-1px);
+}
+
+/* Suggestions Box */
+.ats-suggestions-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px;
+}
+
+.ats-suggestions-card h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ats-suggestion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.ats-suggestion-bullet {
+    background: #dbeafe;
+    color: #2563eb;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 2px;
 }
