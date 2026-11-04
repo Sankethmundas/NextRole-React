@@ -6,7 +6,7 @@
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB_Atlas-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
 [![Google OAuth](https://img.shields.io/badge/Auth-Google_OAuth_2.0-4285F4?style=for-the-badge&logo=google)](https://developers.google.com/identity)
 
-**NextRole** is a comprehensive, full-stack career platform designed to empower job seekers. It brings resume building, ATS resume checking, job application tracking, cover letter generation, and user authentication into one unified, calm workspace.
+**NextRole** is a comprehensive, full-stack career platform designed to empower job seekers. It brings resume building, ATS resume checking, job application tracking, and user authentication into one unified, calm workspace.
 
 ---
 
@@ -29,12 +29,7 @@
 - **Categorized Breakdown**: Group matched and missing keywords into *Skills*, *Tools*, *Certifications*, and *Eligibility*.
 - **Actionable Recommendations**: Delivers smart suggestions to boost ATS match scores.
 
-### ✉️ 4. Cover Letter Generator
-- **Multi-Tone Generation**: Generates *Professional*, *Confident*, or *Friendly* cover letters.
-- **Clipboard & PDF**: Copy formatted text with 1-click or export directly as a PDF document.
-- **Persisted Drafts**: Saves user inputs and generated letters to cloud database.
-
-### 🔐 5. Authentication & Security
+### 🔐 4. Authentication & Security
 - **Dual Auth System**: Standard Email/Password auth with `bcryptjs` hashing + Google OAuth 2.0 via `@react-oauth/google`.
 - **JWT Protection**: Secure 256-bit token authentication for all user-scoped backend routes.
 - **Protected Routes**: Frontend route guarding ensuring user privacy and data security.
@@ -56,7 +51,7 @@
                               │ Mongoose ODM
  ┌────────────────────────────▼────────────────────────────┐
  │                 MONGODB ATLAS (Cloud DB)                │
- │  Users • Jobs • Resumes • Cover Letters • ATS Results   │
+ │  Users • Jobs • Resumes • ATS Results                   │
  └─────────────────────────────────────────────────────────┘
 ```
 
@@ -134,7 +129,6 @@ Open `http://localhost:3000` in your browser.
 
 - [ ] **🤖 OpenAI GPT-4o-mini Integration**:
   - AI Resume Bullet-Point Enhancer & Professional Summary Generator.
-  - Natural Language AI Cover Letter Writer personalized to company job descriptions.
 - [ ] **📄 Full PDF Resume Parser**: Native PDF text parsing support alongside DOCX.
 - [ ] **🔍 Semantic AI ATS Analysis**: Contextual vector-based skill matching beyond keyword search.
 - [ ] **📈 Application Analytics Dashboard**: Visual charts tracking interview success rates and weekly application volume.

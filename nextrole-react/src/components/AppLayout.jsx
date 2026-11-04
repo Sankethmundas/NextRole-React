@@ -7,7 +7,6 @@ import Dashboard from "./pages/Dashboard";
 import ResumeBuilder from "./pages/ResumeBuilder";
 import JobTracker from "./pages/JobTracker";
 import ATSChecker from "./pages/ATSChecker";
-import CoverLetter from "./pages/CoverLetter";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -57,11 +56,6 @@ function AppLayout() {
                     <Route
                         path="/ats-checker"
                         element={<ATSChecker />}
-                    />
-
-                    <Route
-                        path="/cover-letter"
-                        element={<CoverLetter />}
                     />
 
                 </Route>

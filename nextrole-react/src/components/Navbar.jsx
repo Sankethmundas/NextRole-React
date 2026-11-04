@@ -79,14 +79,6 @@ function Navbar() {
 
                 <li>
                     <Link
-                        to="/cover-letter"
-                        onClick={() => setMenuOpen(false)}
-                    >
-                        Cover Letter Generator
-                    </Link>
-                </li>
-                <li>
-                    <Link
                         to="/job-tracker"
                         onClick={() => setMenuOpen(false)}
                     >

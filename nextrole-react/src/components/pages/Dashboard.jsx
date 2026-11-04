@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import "./Dashboard.css";
 import { getJobs } from "../../services/jobService";
 import { getResume } from "../../services/resumeService";
-import { getCoverLetter } from "../../services/coverLetterService";
 import { getAtsResults } from "../../services/atsService";
 
 function Dashboard() {
@@ -11,7 +10,6 @@ function Dashboard() {
 
     const [jobCount, setJobCount] = useState(0);
     const [hasResume, setHasResume] = useState(false);
-    const [hasCoverLetter, setHasCoverLetter] = useState(false);
     const [atsCount, setAtsCount] = useState(0);
 
     useEffect(() => {
@@ -31,13 +29,6 @@ function Dashboard() {
                 setHasResume(!!resumeRes?.resume);
             } catch (e) {
                 console.warn("Failed to load resume for dashboard", e);
-            }
-
-            try {
-                const coverRes = await getCoverLetter();
-                setHasCoverLetter(!!coverRes?.coverLetter);
-            } catch (e) {
-                console.warn("Failed to load cover letter for dashboard", e);
             }
 
             try {
@@ -75,14 +66,6 @@ function Dashboard() {
                 : "Check how well your resume matches a job description.",
             link: "/ats-checker",
             badge: atsCount > 0 ? `${atsCount} saved` : "Analyze now"
-        },
-        {
-            title: "Cover Letter",
-            description: hasCoverLetter
-                ? "You have a generated cover letter saved."
-                : "Generate a tailored cover letter in seconds.",
-            link: "/cover-letter",
-            badge: hasCoverLetter ? "Saved" : "Create letter"
         }
     ];
 

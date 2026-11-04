@@ -12,11 +12,6 @@ const features = [
     {
         title: "ATS Checker",
         description: "Analyze resume ATS compatibility."
-    },
-
-    {
-        title: "Cover Letter Generator",
-        description: "Generate professional cover letters."
     }
 ];
 

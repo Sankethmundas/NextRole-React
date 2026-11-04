@@ -52,7 +52,7 @@ function Home() {
                         features.map((feature, index) => (
 
                             <div
-                                className="col-md-6 col-lg-3 mb-4"
+                                className="col-md-6 col-lg-4 mb-4"
                                 key={index}
                             >
 
