@@ -1,9 +1,17 @@
 const Resume = require('../models/Resume');
 
+const getUserId = (req) => req.user?.userId || req.user?.id || req.user?._id;
+
 const saveResume = async (req, res) => {
     try {
-        const user = req.user.userId;
-        const { resumeData } = req.body;
+        const user = getUserId(req);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User authentication failed. Please log in again.'
+            });
+        }
+        const resumeData = req.body.resumeData || req.body;
 
         const resume = await Resume.findOneAndUpdate(
             { user },
@@ -12,7 +20,7 @@ const saveResume = async (req, res) => {
                 ...resumeData
             },
             {
-                new: true,
+                returnDocument: 'after',
                 upsert: true,
                 setDefaultsOnInsert: true
             }
@@ -34,7 +42,14 @@ const saveResume = async (req, res) => {
 
 const getResume = async (req, res) => {
     try {
-        const resume = await Resume.findOne({ user: req.user.userId });
+        const user = getUserId(req);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User authentication failed. Please log in again.'
+            });
+        }
+        const resume = await Resume.findOne({ user });
 
         return res.status(200).json({
             success: true,

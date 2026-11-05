@@ -5,6 +5,7 @@ const API_URL = `${BASE_URL}/api/resumes`;
 
 const getConfig = () => {
     const token = localStorage.getItem("token");
+    if (!token) return {};
 
     return {
         headers: {
