@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { saveAtsResult, getAtsResults } from "../../services/atsService";
 import { saveResume, getResume } from "../../services/resumeService";
 import { extractTextFromFile, parseResumeText } from "../../utils/resumeParser";
-import { allAtsKeywords, atsActionVerbs, categorizeSkill } from "../../data/atsSkills";
+import { allAtsKeywords, atsActionVerbs, categorizeSkill, matchKeyword } from "../../data/atsSkills";
 
 const SAMPLE_FRONTEND_JD = `Role: Associate Frontend Engineer
 Company: CloudTech Solutions
@@ -44,17 +44,39 @@ function ATSChecker() {
     const printResumeRef = useRef();
 
     // Source selection: 'upload' | 'saved'
-    const [resumeSource, setResumeSource] = useState("upload");
+    const [savedResumeData, setSavedResumeData] = useState(() => {
+        try {
+            const local = localStorage.getItem("resumeData");
+            return local ? JSON.parse(local) : null;
+        } catch {
+            return null;
+        }
+    });
+
+    const [resumeSource, setResumeSource] = useState(() => {
+        try {
+            return localStorage.getItem("resumeData") ? "saved" : "upload";
+        } catch {
+            return "upload";
+        }
+    });
+
     const [resumeFile, setResumeFile] = useState(null);
     const [extractedResumeText, setExtractedResumeText] = useState("");
-    const [savedResumeData, setSavedResumeData] = useState(null);
     const [jobDescription, setJobDescription] = useState("");
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     // ATS Results State
     const [atsAnalysis, setAtsAnalysis] = useState(null);
     const [addedSkills, setAddedSkills] = useState(new Set());
-    const [activeResumeObj, setActiveResumeObj] = useState(null);
+    const [activeResumeObj, setActiveResumeObj] = useState(() => {
+        try {
+            const local = localStorage.getItem("resumeData");
+            return local ? JSON.parse(local) : null;
+        } catch {
+            return null;
+        }
+    });
 
     // Fetch saved resume and latest ATS result on mount
     useEffect(() => {
@@ -78,8 +100,20 @@ function ATSChecker() {
                 const atsRes = await getAtsResults();
                 const latest = atsRes?.atsResults?.[0];
                 if (latest?.result) {
-                    // Populate initial analysis if present
-                    setAtsAnalysis(latest.result);
+                    const resObj = latest.result;
+                    setAtsAnalysis({
+                        score: resObj.score || 0,
+                        keywordMatchRate: resObj.keywordMatchRate ?? resObj.score ?? 0,
+                        techRelevance: resObj.techRelevance ?? resObj.score ?? 0,
+                        formatScore: resObj.formatScore ?? 85,
+                        impactScore: resObj.impactScore ?? 75,
+                        matchedKeywords: resObj.matchedKeywords || [],
+                        missingKeywords: resObj.missingKeywords || [],
+                        groupedMatched: resObj.groupedMatched || {},
+                        groupedMissing: resObj.groupedMissing || {},
+                        suggestions: resObj.suggestions || [],
+                        totalJDKeywords: resObj.totalJDKeywords || (resObj.matchedKeywords?.length || 0) + (resObj.missingKeywords?.length || 0)
+                    });
                 }
             } catch (e) {
                 console.warn("No previous ATS analysis found", e);
@@ -135,20 +169,23 @@ function ATSChecker() {
                 return;
             }
             textToAnalyze = [
-                savedResumeData.name,
-                savedResumeData.summary,
+                savedResumeData.name || "",
+                savedResumeData.email || "",
+                savedResumeData.phone || "",
+                savedResumeData.address || "",
+                savedResumeData.summary || "",
                 Array.isArray(savedResumeData.skills)
                     ? savedResumeData.skills.join(" ")
-                    : savedResumeData.skills,
-                savedResumeData.projectTitle,
-                savedResumeData.projectDescription,
+                    : (savedResumeData.skills || ""),
+                savedResumeData.projectTitle || "",
+                savedResumeData.projectDescription || "",
                 Array.isArray(savedResumeData.education)
                     ? savedResumeData.education.join(" ")
-                    : savedResumeData.education,
+                    : (savedResumeData.education || ""),
                 Array.isArray(savedResumeData.certifications)
                     ? savedResumeData.certifications.join(" ")
-                    : savedResumeData.certifications
-            ].join(" ");
+                    : (savedResumeData.certifications || "")
+            ].filter(Boolean).join(" ");
             setActiveResumeObj(savedResumeData);
         }
 
@@ -164,23 +201,17 @@ function ATSChecker() {
             const resumeLower = textToAnalyze.toLowerCase();
             const jdLower = jobDescription.toLowerCase();
 
-            // 1. Detect required skills in JD
+            // 1. Detect required skills in JD safely
             const relevantJDKeywords = [...new Set(
-                allAtsKeywords.filter((kw) => {
-                    const regex = new RegExp(`\\b${kw.replace(".", "\\.")}\\b`, "i");
-                    return regex.test(jdLower);
-                })
+                allAtsKeywords.filter((kw) => matchKeyword(jdLower, kw))
             )];
 
             if (relevantJDKeywords.length === 0) {
                 toast.warn("Could not find standard tech keywords in this JD. Analyzing based on general match.");
             }
 
-            // 2. Compute Matched & Missing Skills
-            const matched = relevantJDKeywords.filter((kw) => {
-                const regex = new RegExp(`\\b${kw.replace(".", "\\.")}\\b`, "i");
-                return regex.test(resumeLower);
-            });
+            // 2. Compute Matched & Missing Skills safely
+            const matched = relevantJDKeywords.filter((kw) => matchKeyword(resumeLower, kw));
 
             const missing = relevantJDKeywords.filter((kw) => !matched.includes(kw));
 
@@ -191,11 +222,17 @@ function ATSChecker() {
 
             // 4. Formatting & Structure Score (Checks Contact, Summary, Skills, Projects, Education)
             let formatPoints = 0;
-            if (/@/.test(resumeLower)) formatPoints += 20; // email
-            if (/\d{3}/.test(resumeLower)) formatPoints += 20; // phone
-            if (/skills|technologies/i.test(resumeLower)) formatPoints += 20; // skills section
-            if (/projects|experience/i.test(resumeLower)) formatPoints += 20; // experience
-            if (/education|degree|bachelor|university/i.test(resumeLower)) formatPoints += 20; // education
+            const hasEmail = /@/.test(resumeLower) || Boolean(activeResumeObj?.email);
+            const hasPhone = /\d{3}/.test(resumeLower) || Boolean(activeResumeObj?.phone);
+            const hasSkills = /skills|technologies/i.test(resumeLower) || Boolean(activeResumeObj?.skills?.length);
+            const hasProjects = /projects?|experience|employment|work history/i.test(resumeLower) || Boolean(activeResumeObj?.projectTitle || activeResumeObj?.projectDescription);
+            const hasEducation = /education|degree|bachelor|master|university|college|school/i.test(resumeLower) || Boolean(activeResumeObj?.education?.length);
+
+            if (hasEmail) formatPoints += 20;
+            if (hasPhone) formatPoints += 20;
+            if (hasSkills) formatPoints += 20;
+            if (hasProjects) formatPoints += 20;
+            if (hasEducation) formatPoints += 20;
             const formatScore = formatPoints;
 
             // 5. Action Verbs & Impact Score
@@ -274,7 +311,8 @@ function ATSChecker() {
                 try {
                     await saveAtsResult({
                         resumeText: textToAnalyze,
-                        jobDescription
+                        jobDescription,
+                        result: resultObj
                     });
                 } catch (e) {
                     console.warn("Failed to persist ATS analysis", e);
@@ -322,6 +360,7 @@ function ATSChecker() {
 
         // Update active resume state and local storage
         setActiveResumeObj(updatedResume);
+        setSavedResumeData(updatedResume);
         localStorage.setItem("resumeData", JSON.stringify(updatedResume));
 
         // Save to backend if logged in
@@ -332,6 +371,9 @@ function ATSChecker() {
                     name: updatedResume.name || "Your Name",
                     email: updatedResume.email || "",
                     phone: updatedResume.phone || "",
+                    address: updatedResume.address || "",
+                    linkedin: updatedResume.linkedin || "",
+                    github: updatedResume.github || "",
                     summary: updatedResume.summary || "",
                     skills: currentSkills,
                     education: Array.isArray(updatedResume.education)
@@ -400,6 +442,7 @@ function ATSChecker() {
         };
 
         setActiveResumeObj(updatedResume);
+        setSavedResumeData(updatedResume);
         localStorage.setItem("resumeData", JSON.stringify(updatedResume));
 
         const token = localStorage.getItem("token");
@@ -409,6 +452,9 @@ function ATSChecker() {
                     name: updatedResume.name || "Your Name",
                     email: updatedResume.email || "",
                     phone: updatedResume.phone || "",
+                    address: updatedResume.address || "",
+                    linkedin: updatedResume.linkedin || "",
+                    github: updatedResume.github || "",
                     summary: updatedResume.summary || "",
                     skills: currentSkills,
                     education: Array.isArray(updatedResume.education)
@@ -443,13 +489,14 @@ function ATSChecker() {
 
     // Download Updated Resume in PDF format
     const handleDownloadUpdatedResume = () => {
-        if (!activeResumeObj) {
+        const targetResume = activeResumeObj || savedResumeData;
+        if (!targetResume) {
             toast.error("No resume data available to download.");
             return;
         }
 
         const element = printResumeRef.current;
-        const name = activeResumeObj.name || "Optimized_Resume";
+        const name = targetResume.name || "Optimized_Resume";
         const opt = {
             margin: [8, 8, 8, 8],
             filename: `${name.replace(/\s+/g, "_")}_ATS_Optimized.pdf`,
@@ -801,9 +848,13 @@ function ATSChecker() {
                                 {activeResumeObj?.name || "Candidate Name"}
                             </h1>
                             <p style={{ margin: "0", fontSize: "14px", color: "#64748b" }}>
-                                {activeResumeObj?.email && `${activeResumeObj.email} | `}
-                                {activeResumeObj?.phone && `${activeResumeObj.phone} | `}
-                                {activeResumeObj?.address && `${activeResumeObj.address}`}
+                                {[
+                                    activeResumeObj?.email,
+                                    activeResumeObj?.phone,
+                                    activeResumeObj?.address,
+                                    activeResumeObj?.linkedin,
+                                    activeResumeObj?.github
+                                ].filter(Boolean).join(" | ")}
                             </p>
                         </div>
 

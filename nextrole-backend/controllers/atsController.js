@@ -225,6 +225,11 @@ const calculateAtsResult = (resumeText, jobDescription) => {
 
     return {
         score,
+        keywordMatchRate: score,
+        techRelevance: Math.min(100, Math.round(score * 1.05)),
+        formatScore: 85,
+        impactScore: 75,
+        totalJDKeywords: uniqueJDKeywords.length,
         matchedKeywords: matched,
         missingKeywords: missing,
         suggestions,
@@ -237,8 +242,8 @@ const calculateAtsResult = (resumeText, jobDescription) => {
 const saveAtsResult = async (req, res) => {
     try {
         const user = req.user.userId;
-        const { resumeText, jobDescription } = req.body;
-        const result = calculateAtsResult(resumeText, jobDescription);
+        const { resumeText, jobDescription, result: clientResult } = req.body;
+        const result = clientResult || calculateAtsResult(resumeText, jobDescription);
 
         const atsResult = await AtsResult.findOneAndUpdate(
             { user },

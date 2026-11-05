@@ -1,6 +1,6 @@
 import mammoth from "mammoth";
 import * as pdfjsLib from "pdfjs-dist";
-import { allAtsKeywords } from "../data/atsSkills";
+import { allAtsKeywords, matchKeyword } from "../data/atsSkills";
 
 // Configure pdfjs worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
@@ -57,11 +57,11 @@ export const parseResumeText = (rawText) => {
     const phoneMatch = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
     const phone = phoneMatch ? phoneMatch[0] : "";
 
-    // 3. Extract LinkedIn & GitHub
-    const linkedinMatch = text.match(/(?:linkedin\.com\/(?:in|profile)\/|[a-zA-Z0-9_-]+)(?:[\w-]+)?/i);
-    const githubMatch = text.match(/(?:github\.com\/[a-zA-Z0-9_-]+)/i);
+    // 3. Extract LinkedIn & GitHub safely (no greedy fallback that matches random words)
+    const linkedinMatch = text.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|profile)\/[a-zA-Z0-9_.-]+/i);
+    const githubMatch = text.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/[a-zA-Z0-9_.-]+/i);
 
-    // 4. Extract Name (usually in first 3 lines, excluding emails/links/titles)
+    // 4. Extract Name (usually in first 5 lines, excluding emails/links/titles)
     let name = "";
     for (let i = 0; i < Math.min(lines.length, 5); i++) {
         const line = lines[i];
@@ -79,12 +79,9 @@ export const parseResumeText = (rawText) => {
         }
     }
 
-    // 5. Detect Skills by matching known ATS skill dictionary
+    // 5. Detect Skills by matching known ATS skill dictionary safely
     const lowerText = text.toLowerCase();
-    const detectedSkills = allAtsKeywords.filter((keyword) => {
-        const regex = new RegExp(`\\b${keyword.replace(".", "\\.")}\\b`, "i");
-        return regex.test(lowerText);
-    });
+    const detectedSkills = allAtsKeywords.filter((keyword) => matchKeyword(lowerText, keyword));
 
     // Also look for explicit "Skills" section
     let explicitSkills = [];
@@ -149,7 +146,7 @@ export const parseResumeText = (rawText) => {
     }
 
     return {
-        name: name || "Your Name",
+        name: name || "",
         email: email || "",
         phone: phone || "",
         address: "",
@@ -200,19 +197,13 @@ export const tailorResumeToJobDescription = (currentResume, jobDescription) => {
         }
     }
 
-    // 2. Identify required keywords from JD
+    // 2. Identify required keywords from JD safely
     const jdKeywords = [...new Set(
-        allAtsKeywords.filter((kw) => {
-            const regex = new RegExp(`\\b${kw.replace(".", "\\.")}\\b`, "i");
-            return regex.test(jdLower);
-        })
+        allAtsKeywords.filter((kw) => matchKeyword(jdLower, kw))
     )];
 
-    // Current matches & missing
-    const matchedBefore = jdKeywords.filter((kw) => {
-        const regex = new RegExp(`\\b${kw.replace(".", "\\.")}\\b`, "i");
-        return regex.test(resumeText);
-    });
+    // Current matches & missing safely
+    const matchedBefore = jdKeywords.filter((kw) => matchKeyword(resumeText, kw));
 
     const missingKeywords = jdKeywords.filter((kw) => !matchedBefore.includes(kw));
 
@@ -243,7 +234,7 @@ export const tailorResumeToJobDescription = (currentResume, jobDescription) => {
         }
     });
 
-    // 4. Generate AI/Smart Tailored Summary
+    // 4. Generate Smart Tailored Summary
     const topSkillsStr = updatedSkillList.slice(0, 5).join(", ");
     const tailoredSummary = `Passionate and detail-oriented ${targetRole} with strong foundation in ${topSkillsStr}. Proven ability to build responsive, accessible, and high-performance web applications with clean, maintainable code. Skilled in modern frontend architectures, REST API integration, state management, and cross-functional team collaboration to deliver exceptional user experiences aligned with job requirements.`;
 

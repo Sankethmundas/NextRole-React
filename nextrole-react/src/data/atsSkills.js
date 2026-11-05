@@ -25,7 +25,7 @@ export const skillCategories = {
     testingTools: [
         "jest", "react testing library", "cypress", "playwright", "mocha", "chai", "selenium",
         "unit testing", "integration testing", "end-to-end testing", "e2e testing", "figma",
-        "jira", "confluence", "scrum", "agile", "kanban", "vite", "babel", "npm", "yarn"
+        "jira", "confluence", "scrum", "agile", "kanban", "babel", "npm", "yarn"
     ],
     coreCompetencies: [
         "data structures", "algorithms", "system design", "object oriented programming", "oop",
@@ -40,8 +40,8 @@ export const skillCategories = {
     ]
 };
 
-// Flattened list of all keywords for fast lookup
-export const allAtsKeywords = Object.values(skillCategories).flat();
+// Flattened, unique list of all keywords for fast lookup
+export const allAtsKeywords = [...new Set(Object.values(skillCategories).flat())];
 
 // Action verbs that strong ATS systems look for in bullet points
 export const atsActionVerbs = [
@@ -50,6 +50,26 @@ export const atsActionVerbs = [
     "refactored", "integrated", "deployed", "scaled", "collaborated", "managed",
     "resolved", "enhanced", "reduced", "increased", "launched", "standardized"
 ];
+
+/**
+ * Safely creates a RegExp for an ATS keyword that may contain special regex characters
+ * like 'c++', 'c#', '.net', 'react.js', etc.
+ */
+export const createKeywordRegex = (keyword) => {
+    if (!keyword) return /(?!)/;
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const leadingBoundary = /^\w/.test(keyword) ? "\\b" : "(?:^|[\\s/.,;:(])";
+    const trailingBoundary = /\w$/.test(keyword) ? "\\b" : "(?=$|[\\s/.,;:!?)])";
+    return new RegExp(`${leadingBoundary}${escaped}${trailingBoundary}`, "i");
+};
+
+/**
+ * Checks whether a given keyword exists inside text using safe word boundary matching
+ */
+export const matchKeyword = (text, keyword) => {
+    if (!text || !keyword) return false;
+    return createKeywordRegex(keyword).test(text);
+};
 
 // Helper to categorize keywords
 export const categorizeSkill = (skill) => {
