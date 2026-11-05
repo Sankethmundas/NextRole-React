@@ -13,13 +13,32 @@ import {
     FaCode,
     FaLightbulb,
     FaCheck,
-    FaPlus
+    FaPlus,
+    FaLinkedin,
+    FaGithub,
+    FaEnvelope,
+    FaPhone,
+    FaMapMarkerAlt
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { saveAtsResult, getAtsResults } from "../../services/atsService";
 import { saveResume, getResume } from "../../services/resumeService";
 import { extractTextFromFile, parseResumeText } from "../../utils/resumeParser";
 import { allAtsKeywords, atsActionVerbs, categorizeSkill, matchKeyword } from "../../data/atsSkills";
+
+const formatExternalUrl = (url, type = "") => {
+    if (!url) return "#";
+    const trimmed = String(url).trim();
+    if (!trimmed) return "#";
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    if (type === "linkedin" && !trimmed.toLowerCase().includes("linkedin.com")) {
+        return `https://linkedin.com/in/${trimmed.replace(/^@/, "")}`;
+    }
+    if (type === "github" && !trimmed.toLowerCase().includes("github.com")) {
+        return `https://github.com/${trimmed.replace(/^@/, "")}`;
+    }
+    return `https://${trimmed}`;
+};
 
 const SAMPLE_FRONTEND_JD = `Role: Associate Frontend Engineer
 Company: CloudTech Solutions
@@ -837,24 +856,56 @@ function ATSChecker() {
                             background: "#ffffff"
                         }}
                     >
-                        <div style={{ textAlign: "center", borderBottom: "2px solid #2563eb", paddingBottom: "16px", marginBottom: "20px" }}>
-                            <h1 style={{ fontSize: "28px", margin: "0 0 6px", color: "#1e3a8a" }}>
+                        <div style={{ textAlign: "center", borderBottom: "2px solid #0f172a", paddingBottom: "16px", marginBottom: "20px" }}>
+                            <h1 style={{ fontSize: "28px", margin: "0 0 6px", color: "#0f172a" }}>
                                 {activeResumeObj?.name || "Candidate Name"}
                             </h1>
-                            <p style={{ margin: "0", fontSize: "14px", color: "#64748b" }}>
-                                {[
-                                    activeResumeObj?.email,
-                                    activeResumeObj?.phone,
-                                    activeResumeObj?.address,
-                                    activeResumeObj?.linkedin,
-                                    activeResumeObj?.github
-                                ].filter(Boolean).join(" | ")}
-                            </p>
+                            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "14px", fontSize: "14px", color: "#64748b" }}>
+                                {activeResumeObj?.email && (
+                                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                                        <FaEnvelope /> {activeResumeObj.email}
+                                    </span>
+                                )}
+                                {activeResumeObj?.phone && (
+                                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                                        <FaPhone /> {activeResumeObj.phone}
+                                    </span>
+                                )}
+                                {activeResumeObj?.linkedin && (
+                                    <a
+                                        href={formatExternalUrl(activeResumeObj.linkedin, "linkedin")}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ display: "inline-flex", alignItems: "center", color: "#0f172a", fontSize: "18px", textDecoration: "none" }}
+                                        title="LinkedIn Profile"
+                                        aria-label="LinkedIn"
+                                    >
+                                        <FaLinkedin />
+                                    </a>
+                                )}
+                                {activeResumeObj?.github && (
+                                    <a
+                                        href={formatExternalUrl(activeResumeObj.github, "github")}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ display: "inline-flex", alignItems: "center", color: "#0f172a", fontSize: "18px", textDecoration: "none" }}
+                                        title="GitHub Profile"
+                                        aria-label="GitHub"
+                                    >
+                                        <FaGithub />
+                                    </a>
+                                )}
+                                {activeResumeObj?.address && (
+                                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                                        <FaMapMarkerAlt /> {activeResumeObj.address}
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         {activeResumeObj?.summary && (
                             <div style={{ marginBottom: "18px" }}>
-                                <h3 style={{ fontSize: "16px", color: "#2563eb", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
+                                <h3 style={{ fontSize: "16px", color: "#0f172a", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
                                     Professional Summary
                                 </h3>
                                 <p style={{ fontSize: "14px", lineHeight: "1.6" }}>
@@ -864,7 +915,7 @@ function ATSChecker() {
                         )}
 
                         <div style={{ marginBottom: "18px" }}>
-                            <h3 style={{ fontSize: "16px", color: "#2563eb", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
+                            <h3 style={{ fontSize: "16px", color: "#0f172a", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
                                 Technical Skills
                             </h3>
                             <p style={{ fontSize: "14px", lineHeight: "1.6" }}>
@@ -876,7 +927,7 @@ function ATSChecker() {
 
                         {(activeResumeObj?.projectTitle || activeResumeObj?.projectDescription) && (
                             <div style={{ marginBottom: "18px" }}>
-                                <h3 style={{ fontSize: "16px", color: "#2563eb", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
+                                <h3 style={{ fontSize: "16px", color: "#0f172a", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
                                     Projects & Experience
                                 </h3>
                                 <h4 style={{ fontSize: "15px", margin: "4px 0" }}>
@@ -890,7 +941,7 @@ function ATSChecker() {
 
                         {activeResumeObj?.education && (
                             <div style={{ marginBottom: "18px" }}>
-                                <h3 style={{ fontSize: "16px", color: "#2563eb", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
+                                <h3 style={{ fontSize: "16px", color: "#0f172a", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
                                     Education
                                 </h3>
                                 <p style={{ fontSize: "14px", lineHeight: "1.6", whiteSpace: "pre-line" }}>
@@ -903,7 +954,7 @@ function ATSChecker() {
 
                         {activeResumeObj?.certifications && (
                             <div>
-                                <h3 style={{ fontSize: "16px", color: "#2563eb", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
+                                <h3 style={{ fontSize: "16px", color: "#0f172a", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", textTransform: "uppercase" }}>
                                     Certifications
                                 </h3>
                                 <p style={{ fontSize: "14px", lineHeight: "1.6" }}>

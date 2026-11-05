@@ -30,6 +30,20 @@ import {
     tailorResumeToJobDescription
 } from "../../utils/resumeParser";
 
+const formatExternalUrl = (url, type = "") => {
+    if (!url) return "#";
+    const trimmed = String(url).trim();
+    if (!trimmed) return "#";
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    if (type === "linkedin" && !trimmed.toLowerCase().includes("linkedin.com")) {
+        return `https://linkedin.com/in/${trimmed.replace(/^@/, "")}`;
+    }
+    if (type === "github" && !trimmed.toLowerCase().includes("github.com")) {
+        return `https://github.com/${trimmed.replace(/^@/, "")}`;
+    }
+    return `https://${trimmed}`;
+};
+
 const SAMPLE_RESUME = {
     name: "Alex Morgan",
     email: "alex.morgan@email.com",
@@ -833,19 +847,33 @@ function ResumeBuilder() {
                                                 <FaPhone /> {resumeData.phone}
                                             </span>
                                         )}
+                                        {resumeData.linkedin && (
+                                            <a
+                                                href={formatExternalUrl(resumeData.linkedin, "linkedin")}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="paper-contact-link"
+                                                title={`LinkedIn: ${resumeData.linkedin}`}
+                                                aria-label="LinkedIn Profile"
+                                            >
+                                                <FaLinkedin />
+                                            </a>
+                                        )}
+                                        {resumeData.github && (
+                                            <a
+                                                href={formatExternalUrl(resumeData.github, "github")}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="paper-contact-link"
+                                                title={`GitHub: ${resumeData.github}`}
+                                                aria-label="GitHub Profile"
+                                            >
+                                                <FaGithub />
+                                            </a>
+                                        )}
                                         {resumeData.address && (
                                             <span className="paper-contact-item">
                                                 <FaMapMarkerAlt /> {resumeData.address}
-                                            </span>
-                                        )}
-                                        {resumeData.linkedin && (
-                                            <span className="paper-contact-item">
-                                                <FaLinkedin /> {resumeData.linkedin}
-                                            </span>
-                                        )}
-                                        {resumeData.github && (
-                                            <span className="paper-contact-item">
-                                                <FaGithub /> {resumeData.github}
                                             </span>
                                         )}
                                     </div>

@@ -267,7 +267,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px;
+    align-items: center;
+    gap: 14px;
     font-size: 0.85rem;
     color: #475569;
 }
@@ -275,7 +276,23 @@
 .paper-contact-item {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+}
+
+.paper-contact-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f172a;
+    font-size: 1.15rem;
+    text-decoration: none;
+    line-height: 1;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.paper-contact-link:hover {
+    color: #2563eb;
+    transform: translateY(-1px);
 }
 
 .paper-section {
