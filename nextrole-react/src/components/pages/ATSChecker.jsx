@@ -222,17 +222,11 @@ function ATSChecker() {
 
             // 4. Formatting & Structure Score (Checks Contact, Summary, Skills, Projects, Education)
             let formatPoints = 0;
-            const hasEmail = /@/.test(resumeLower) || Boolean(activeResumeObj?.email);
-            const hasPhone = /\d{3}/.test(resumeLower) || Boolean(activeResumeObj?.phone);
-            const hasSkills = /skills|technologies/i.test(resumeLower) || Boolean(activeResumeObj?.skills?.length);
-            const hasProjects = /projects?|experience|employment|work history/i.test(resumeLower) || Boolean(activeResumeObj?.projectTitle || activeResumeObj?.projectDescription);
-            const hasEducation = /education|degree|bachelor|master|university|college|school/i.test(resumeLower) || Boolean(activeResumeObj?.education?.length);
-
-            if (hasEmail) formatPoints += 20;
-            if (hasPhone) formatPoints += 20;
-            if (hasSkills) formatPoints += 20;
-            if (hasProjects) formatPoints += 20;
-            if (hasEducation) formatPoints += 20;
+            if (/@/.test(resumeLower)) formatPoints += 20; // email
+            if (/\d{3}/.test(resumeLower)) formatPoints += 20; // phone
+            if (/skills|technologies/i.test(resumeLower)) formatPoints += 20; // skills section
+            if (/projects|experience/i.test(resumeLower)) formatPoints += 20; // experience
+            if (/education|degree|bachelor|university/i.test(resumeLower)) formatPoints += 20; // education
             const formatScore = formatPoints;
 
             // 5. Action Verbs & Impact Score

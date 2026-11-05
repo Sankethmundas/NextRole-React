@@ -217,12 +217,12 @@
     border-top: 6px solid #2563eb;
 }
 .resume-paper.theme-modern .paper-name {
-    color: #1e3a8a;
+    color: #0f172a;
     font-weight: 800;
 }
 .resume-paper.theme-modern .paper-section-title {
-    color: #1d4ed8;
-    border-bottom: 2px solid #e0e7ff;
+    color: #0f172a;
+    border-bottom: 2px solid #cbd5e1;
 }
 
 /* 2. Executive Slate */
@@ -243,12 +243,12 @@
     border-top: 6px solid #059669;
 }
 .resume-paper.theme-tech .paper-name {
-    color: #064e3b;
+    color: #0f172a;
     font-weight: 800;
 }
 .resume-paper.theme-tech .paper-section-title {
-    color: #059669;
-    border-bottom: 2px solid #d1fae5;
+    color: #0f172a;
+    border-bottom: 2px solid #cbd5e1;
 }
 
 /* Resume Paper Inner Elements */
@@ -300,27 +300,37 @@
     margin-bottom: 0;
 }
 
+.paper-skills-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #334155;
+    margin: 0;
+}
+
 .paper-skills-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: block;
 }
 
 .paper-skill-badge {
-    background: #f1f5f9;
-    color: #1e293b;
-    border: 1px solid #e2e8f0;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 0.825rem;
-    font-weight: 500;
+    display: inline;
+    background: none;
+    color: #334155;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.paper-skill-badge + .paper-skill-badge::before {
+    content: ", ";
 }
 
 .paper-skill-badge.badge-tailored {
-    background: #ede9fe;
-    color: #6d28d9;
-    border-color: #ddd6fe;
-    font-weight: 600;
+    background: none;
+    color: #334155;
+    border: none;
+    font-weight: 400;
 }
 
 .paper-entry-header {

@@ -103,29 +103,32 @@ function ResumeBuilder() {
                 const response = await getResume();
                 if (response?.resume) {
                     const saved = response.resume;
-                    setResumeData({
-                        name: saved.name || SAMPLE_RESUME.name,
-                        email: saved.email || SAMPLE_RESUME.email,
-                        phone: saved.phone || SAMPLE_RESUME.phone,
-                        address: saved.address || "",
-                        linkedin: saved.linkedin || "",
-                        github: saved.github || "",
-                        summary: saved.summary || SAMPLE_RESUME.summary,
-                        skills: Array.isArray(saved.skills)
-                            ? saved.skills.join(", ")
-                            : saved.skills || SAMPLE_RESUME.skills,
-                        education: Array.isArray(saved.education)
-                            ? saved.education.join("\n")
-                            : saved.education || SAMPLE_RESUME.education,
-                        projectTitle: saved.projectTitle || SAMPLE_RESUME.projectTitle,
-                        projectDescription: saved.projectDescription || SAMPLE_RESUME.projectDescription,
-                        certifications: Array.isArray(saved.certifications)
-                            ? saved.certifications.join(", ")
-                            : saved.certifications || SAMPLE_RESUME.certifications
-                    });
+                    // Only load from backend if it has actual content (name or email)
+                    if (saved.name || saved.email) {
+                        setResumeData({
+                            name: saved.name || "",
+                            email: saved.email || "",
+                            phone: saved.phone || "",
+                            address: saved.address || "",
+                            linkedin: saved.linkedin || "",
+                            github: saved.github || "",
+                            summary: saved.summary || "",
+                            skills: Array.isArray(saved.skills)
+                                ? saved.skills.join(", ")
+                                : saved.skills || "",
+                            education: Array.isArray(saved.education)
+                                ? saved.education.join("\n")
+                                : saved.education || "",
+                            projectTitle: saved.projectTitle || "",
+                            projectDescription: saved.projectDescription || "",
+                            certifications: Array.isArray(saved.certifications)
+                                ? saved.certifications.join(", ")
+                                : saved.certifications || ""
+                        });
+                    }
                 }
             } catch (error) {
-                console.warn("Failed to load saved resume from backend", error);
+                console.warn("Failed to load saved resume from backend — using localStorage data", error);
             } finally {
                 isLoaded.current = true;
             }
@@ -185,40 +188,46 @@ function ResumeBuilder() {
 
     // Manual Save
     const handleSaveResume = async () => {
+        // Always persist to localStorage first (works offline)
+        localStorage.setItem("resumeData", JSON.stringify(resumeData));
+
         const token = localStorage.getItem("token");
         if (!token) {
-            toast.error("Please log in to save your resume to your account.");
+            toast.success("Resume saved locally! Log in to sync it to your account.");
             return;
         }
 
+        const payload = {
+            name: resumeData.name,
+            email: resumeData.email,
+            phone: resumeData.phone,
+            address: resumeData.address,
+            linkedin: resumeData.linkedin,
+            github: resumeData.github,
+            summary: resumeData.summary,
+            skills: (resumeData.skills || "")
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            education: (resumeData.education || "")
+                .split("\n")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            projectTitle: resumeData.projectTitle,
+            projectDescription: resumeData.projectDescription,
+            certifications: (resumeData.certifications || "")
+                .split(/,|\n/)
+                .map((s) => s.trim())
+                .filter(Boolean)
+        };
+
         try {
-            await saveResume({
-                name: resumeData.name,
-                email: resumeData.email,
-                phone: resumeData.phone,
-                address: resumeData.address,
-                linkedin: resumeData.linkedin,
-                github: resumeData.github,
-                summary: resumeData.summary,
-                skills: (resumeData.skills || "")
-                    .split(",")
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-                education: (resumeData.education || "")
-                    .split("\n")
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-                projectTitle: resumeData.projectTitle,
-                projectDescription: resumeData.projectDescription,
-                certifications: (resumeData.certifications || "")
-                    .split(/,|\n/)
-                    .map((s) => s.trim())
-                    .filter(Boolean)
-            });
-            toast.success("Resume saved successfully!");
+            await saveResume(payload);
+            toast.success("Resume saved to your account!");
         } catch (error) {
-            console.error("Failed to save resume", error);
-            toast.error("Failed to save resume.");
+            console.error("Failed to save resume to backend:", error);
+            // Local save already succeeded, so show partial success
+            toast.info("Resume saved locally. Backend sync failed — check if the server is running.");
         }
     };
 
@@ -854,13 +863,9 @@ function ResumeBuilder() {
                                 {skillsList.length > 0 && (
                                     <div className="paper-section">
                                         <h3 className="paper-section-title">Technical Skills</h3>
-                                        <div className="paper-skills-grid">
-                                            {skillsList.map((skill, idx) => (
-                                                <span key={idx} className="paper-skill-badge">
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                        </div>
+                                        <p className="paper-skills-text">
+                                            {skillsList.join(", ")}
+                                        </p>
                                     </div>
                                 )}
 
