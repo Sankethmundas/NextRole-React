@@ -1,22 +1,27 @@
 const Job = require("../models/job");
 
+const getUserId = (req) => req.user?.userId || req.user?.id || req.user?._id;
 
 const createJob = async (req, res) => {
     try {
         const { company, role, status } = req.body;
         if (!company || !role) {
-
             return res.status(400).json({
                 success: false,
                 message: "Company and role are required."
             });
-
         }
-        const user = req.user.userId;
+        const user = getUserId(req);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated. Please log in again."
+            });
+        }
         const job = await Job.create({
-            company,
-            role,
-            status,
+            company: company.trim(),
+            role: role.trim(),
+            status: status || "Applied",
             user
         });
 
@@ -32,20 +37,24 @@ const createJob = async (req, res) => {
             error: error.message
         });
     }
-}
+};
 
 const getJobs = async (req, res) => {
     try {
-        const jobs = await Job.find({
-            user: req.user.userId
-        });
+        const user = getUserId(req);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated. Please log in again."
+            });
+        }
+        const jobs = await Job.find({ user }).sort({ createdAt: -1 });
         return res.status(200).json({
             success: true,
             count: jobs.length,
             jobs
         });
-    }
-    catch (error) {
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: "Error fetching jobs",
@@ -55,15 +64,17 @@ const getJobs = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-
     try {
-
         const id = req.params.id;
         const { company, role, status } = req.body;
-        const job = await Job.findOne({
-            _id: id,
-            user: req.user.userId
-        });
+        const user = getUserId(req);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated. Please log in again."
+            });
+        }
+        const job = await Job.findOne({ _id: id, user });
 
         if (!job) {
             return res.status(404).json({
@@ -71,9 +82,9 @@ const updateJob = async (req, res) => {
                 message: "Job not found"
             });
         }
-        job.company = company;
-        job.role = role;
-        job.status = status;
+        if (company) job.company = company.trim();
+        if (role) job.role = role.trim();
+        if (status) job.status = status;
 
         await job.save();
 
@@ -82,36 +93,31 @@ const updateJob = async (req, res) => {
             message: "Job updated successfully",
             job
         });
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
         return res.status(500).json({
             success: false,
             message: "Error updating job",
             error: error.message
-        })
-
+        });
     }
-
 };
 
 const deleteJob = async (req, res) => {
-
     try {
         const id = req.params.id;
-        const job = await Job.findOne({
-            _id: id,
-            user: req.user.userId
-        });
+        const user = getUserId(req);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated. Please log in again."
+            });
+        }
+        const job = await Job.findOne({ _id: id, user });
         if (!job) {
-
             return res.status(404).json({
                 success: false,
                 message: "Job not found"
             });
-
         }
         await job.deleteOne();
 
@@ -119,17 +125,13 @@ const deleteJob = async (req, res) => {
             success: true,
             message: "Job deleted successfully"
         });
-
     } catch (error) {
-
         return res.status(500).json({
             success: false,
             message: "Error deleting job",
             error: error.message
         });
-
     }
-
 };
 
 module.exports = {

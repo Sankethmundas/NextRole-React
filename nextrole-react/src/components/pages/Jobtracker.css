@@ -74,6 +74,9 @@
 .offer-card{
     border-left:5px solid #22c55e;
 }
+.rejected-card{
+    border-left:5px solid #ef4444;
+}
 
 @media(max-width:768px){
 

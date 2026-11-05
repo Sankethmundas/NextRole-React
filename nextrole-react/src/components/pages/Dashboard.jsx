@@ -43,10 +43,14 @@ function Dashboard() {
         const load = async () => {
             try {
                 const jobsRes = await getJobs();
-                const total = jobsRes?.count || (jobsRes?.jobs?.length || 0);
+                const total = jobsRes?.count ?? (jobsRes?.jobs?.length ?? 0);
                 setJobCount(total);
             } catch (e) {
                 console.warn("Failed to load jobs for dashboard", e);
+                try {
+                    const localJobs = JSON.parse(localStorage.getItem("nextrole_job_applications") || "[]");
+                    setJobCount(localJobs.length);
+                } catch {}
             }
 
             try {
